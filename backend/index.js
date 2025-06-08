@@ -70,29 +70,59 @@ const port = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-    origin: process.env.FRONTEND_URL || '*', // Will be updated with your Vercel URL
+    origin: process.env.FRONTEND_URL || '*',
     methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type']
+    allowedHeaders: ['Content-Type'],
+    credentials: true
 }));
 app.use(express.json());
 
 // Initialize heap with max size of 100
 const leaderboard = new MinHeap(100);
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Global error handler:', err.stack);
+    res.status(500).json({ error: 'Something went wrong!' });
+});
+
 // Routes
 app.post('/add_score', (req, res) => {
-    const { name, score } = req.body;
-    
-    if (!name || typeof score !== 'number') {
-        return res.status(400).json({ error: 'Invalid input. Name and score are required.' });
-    }
+    try {
+        const { name, score } = req.body;
+        
+        if (!name || typeof score !== 'number') {
+            return res.status(400).json({ 
+                error: 'Invalid input. Name and score are required.',
+                details: { name: !name ? 'Name is required' : null, score: typeof score !== 'number' ? 'Score must be a number' : null }
+            });
+        }
 
-    leaderboard.insert({ name, score });
-    res.json({ message: 'Score added successfully', scores: leaderboard.getSortedScores() });
+        if (score < 0 || score > 100) {
+            return res.status(400).json({ error: 'Score must be between 0 and 100' });
+        }
+
+        leaderboard.insert({ name, score });
+        const updatedScores = leaderboard.getSortedScores();
+        console.log('Score added successfully:', { name, score, updatedScores });
+        res.json({ 
+            message: 'Score added successfully', 
+            scores: updatedScores,
+            position: updatedScores.findIndex(s => s.name === name && s.score === score) + 1
+        });
+    } catch (error) {
+        console.error('Error adding score:', error);
+        res.status(500).json({ error: 'Failed to add score', details: error.message });
+    }
 });
 
 app.get('/get_leaderboard', (req, res) => {
-    res.json(leaderboard.getSortedScores());
+    try {
+        res.json(leaderboard.getSortedScores());
+    } catch (error) {
+        console.error('Error getting leaderboard:', error);
+        res.status(500).json({ error: 'Failed to get leaderboard' });
+    }
 });
 
 // Health check endpoint
@@ -101,6 +131,21 @@ app.get('/health', (req, res) => {
 });
 
 // Start server
-app.listen(port, () => {
+const server = app.listen(port, '0.0.0.0', () => {
     console.log(`Server running on port ${port}`);
+});
+
+// Handle server errors
+server.on('error', (error) => {
+    console.error('Server error:', error);
+    process.exit(1);
+});
+
+// Handle process termination
+process.on('SIGTERM', () => {
+    console.log('SIGTERM received. Shutting down gracefully...');
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+    });
 }); 

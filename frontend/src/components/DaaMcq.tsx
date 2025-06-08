@@ -103,7 +103,10 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
     const score = calculateScore();
     
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001'}/add_score`, {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+      console.log('Submitting to backend URL:', backendUrl); // Debug log
+      
+      const response = await fetch(`${backendUrl}/add_score`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,15 +115,17 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to submit score');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to submit score');
       }
 
       const data = await response.json();
+      console.log('Score submitted successfully:', data); // Debug log
       setSubmitted(true);
       setShowScore(true);
     } catch (err) {
-      setError('Failed to submit score. Please try again.');
       console.error('Error submitting score:', err);
+      setError(err instanceof Error ? err.message : 'Failed to submit score. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
