@@ -103,20 +103,29 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
     const score = calculateScore();
     
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
+      const backendUrl = process.env.REACT_APP_BACKEND_URL;
+      if (!backendUrl) {
+        throw new Error('Backend URL is not configured');
+      }
+      
       console.log('Submitting to backend URL:', backendUrl); // Debug log
       
       const response = await fetch(`${backendUrl}/add_score`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
+        mode: 'cors',
         body: JSON.stringify({ name: userName, score }),
       });
 
+      console.log('Response status:', response.status); // Debug log
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to submit score');
+        console.error('Error response:', errorData); // Debug log
+        throw new Error(errorData.error || `Failed to submit score: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
