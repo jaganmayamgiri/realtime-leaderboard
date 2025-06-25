@@ -196,10 +196,10 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
         )}
 
         <div className="space-y-6">
-          {shuffledQuestions.map((question) => (
+          {shuffledQuestions.map((question, idx) => (
             <div key={question.id} className="card">
               <h3 className="text-lg font-semibold mb-4">
-                {question.id}. {question.question}
+                {idx + 1}. {question.question}
               </h3>
               <div className="space-y-2">
                 {question.options.map((option) => (
