@@ -7,11 +7,12 @@ const Navbar: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
+    const html = document.documentElement;
     if (darkMode) {
-      document.documentElement.classList.add('dark');
+      html.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      html.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);

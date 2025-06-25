@@ -181,6 +181,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
       
       console.log('Submitting to backend URL:', backendUrl); // Debug log
       
+      const nameToSend = userName && userName.trim() !== '' ? userName : 'Guest';
       const response = await fetch(`${backendUrl}/add_score`, {
         method: 'POST',
         headers: {
@@ -188,7 +189,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
           'Accept': 'application/json'
         },
         mode: 'cors',
-        body: JSON.stringify({ name: userName, score }),
+        body: JSON.stringify({ name: nameToSend, score }),
       });
 
       console.log('Response status:', response.status); // Debug log

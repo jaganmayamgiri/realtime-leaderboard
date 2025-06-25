@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import CardGrid from './components/CardGrid';
-import ContactForm from './components/ContactForm';
 import DaaMcq from './components/DaaMcq';
 import Leaderboard from './components/Leaderboard';
 
@@ -12,7 +11,6 @@ function Home() {
     <>
       <Hero />
       <CardGrid />
-      <ContactForm />
     </>
   );
 }
