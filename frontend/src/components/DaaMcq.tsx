@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import CountUp from 'react-countup';
+import confetti from 'canvas-confetti';
+import Modal from 'react-modal';
 
 interface Question {
   id: number;
@@ -85,6 +88,50 @@ function shuffleArray<T>(array: T[]): T[] {
   return arr;
 }
 
+// Study resources for each question
+const studyResources = [
+  {
+    question: "What is the time complexity of the Merge Sort algorithm?",
+    link: "https://www.geeksforgeeks.org/merge-sort/"
+  },
+  {
+    question: "Which of the following is not a Divide and Conquer algorithm?",
+    link: "https://www.geeksforgeeks.org/divide-and-conquer-algorithm/"
+  },
+  {
+    question: "Which data structure is used in Breadth-First Search (BFS) of a graph?",
+    link: "https://www.geeksforgeeks.org/breadth-first-search-or-bfs-for-a-graph/"
+  },
+  {
+    question: "What is the worst-case time complexity of Quick Sort?",
+    link: "https://www.geeksforgeeks.org/quick-sort/"
+  },
+  {
+    question: "Which of the following algorithms is used to solve the Single Source Shortest Path problem for graphs with negative weights?",
+    link: "https://www.geeksforgeeks.org/bellman-ford-algorithm-dp-23/"
+  },
+  {
+    question: "In Dynamic Programming, the technique of storing previously computed values to avoid repeated work is called:",
+    link: "https://www.geeksforgeeks.org/dynamic-programming/"
+  },
+  {
+    question: "Which of the following problems can be solved using Greedy Algorithm?",
+    link: "https://www.geeksforgeeks.org/greedy-algorithms/"
+  },
+  {
+    question: "What is the time complexity of inserting an element into a Min-Heap?",
+    link: "https://www.geeksforgeeks.org/binary-heap/"
+  },
+  {
+    question: "Which traversal technique is used by Topological Sorting of a Directed Acyclic Graph (DAG)?",
+    link: "https://www.geeksforgeeks.org/topological-sorting/"
+  },
+  {
+    question: "Which of the following is NOT a characteristic of Greedy Algorithm?",
+    link: "https://www.geeksforgeeks.org/greedy-algorithms/"
+  }
+];
+
 const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: string }>({});
   const [submitted, setSubmitted] = useState(false);
@@ -92,6 +139,9 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [scoreForCountUp, setScoreForCountUp] = useState(0);
+  const progressRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -121,6 +171,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
     setIsSubmitting(true);
     setError('');
     const score = calculateScore();
+    setScoreForCountUp(score);
     
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL;
@@ -152,6 +203,13 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
       console.log('Score submitted successfully:', data); // Debug log
       setSubmitted(true);
       setShowScore(true);
+      if (score === shuffledQuestions.length) {
+        confetti({
+          particleCount: 150,
+          spread: 90,
+          origin: { y: 0.6 }
+        });
+      }
     } catch (err) {
       console.error('Error submitting score:', err);
       setError(err instanceof Error ? err.message : 'Failed to submit score. Please try again.');
@@ -178,8 +236,17 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-background py-8 px-4 relative overflow-hidden">
+      {/* Floating particles background */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <svg width="100%" height="100%" className="absolute inset-0 animate-pulse" style={{ opacity: 0.12 }}>
+          <circle cx="20%" cy="30%" r="60" fill="#3B82F6" />
+          <circle cx="80%" cy="70%" r="80" fill="#1E40AF" />
+          <circle cx="50%" cy="10%" r="40" fill="#6366F1" />
+          <circle cx="60%" cy="80%" r="30" fill="#60A5FA" />
+        </svg>
+      </div>
+      <div className="max-w-4xl mx-auto relative z-10">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800">
             DAA MCQ Practice
@@ -194,6 +261,15 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
             {error}
           </div>
         )}
+
+        {/* Animated Progress Bar */}
+        <div className="w-full h-4 bg-gray-200 rounded-full mb-8 overflow-hidden shadow-inner">
+          <div
+            ref={progressRef}
+            className="h-full bg-gradient-to-r from-primary to-secondary transition-all duration-700"
+            style={{ width: `${(Object.keys(selectedAnswers).length / shuffledQuestions.length) * 100}%` }}
+          ></div>
+        </div>
 
         <div className="space-y-6">
           {shuffledQuestions.map((question, idx) => (
@@ -238,7 +314,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
           <div className="mt-12 text-center">
             <div className="card card-animate bg-white shadow-2xl">
               <h2 className="text-3xl font-extrabold mb-4 text-primary drop-shadow">
-                Your Score: {calculateScore()} <span className="text-gray-700 font-medium">out of {shuffledQuestions.length}</span>
+                Your Score: <CountUp end={scoreForCountUp} duration={1.2} className="inline-block text-4xl text-secondary font-bold" /> <span className="text-gray-700 font-medium">out of {shuffledQuestions.length}</span>
               </h2>
               <p className="text-lg text-gray-600 mb-6 animate-fade-in">
                 {calculateScore() === shuffledQuestions.length
@@ -262,8 +338,51 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
                 >
                   Try Again
                 </button>
+                <button
+                  onClick={() => setShowModal(true)}
+                  className="btn btn-primary w-full text-lg py-3 rounded-xl shadow-lg hover:scale-105 transition-transform mt-2"
+                >
+                  Study Resources
+                </button>
               </div>
             </div>
+            {/* Study Resources Modal */}
+            <Modal
+              isOpen={showModal}
+              onRequestClose={() => setShowModal(false)}
+              className="fixed inset-0 flex items-center justify-center z-50 outline-none"
+              overlayClassName="fixed inset-0 bg-black bg-opacity-40 z-40"
+              ariaHideApp={false}
+            >
+              <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full animate-fade-in">
+                <h2 className="text-2xl font-bold text-primary mb-6 text-center">Study Resources for All Questions</h2>
+                <ul className="space-y-6">
+                  {studyResources.map((q, idx) => (
+                    <li key={q.link} className="p-4 rounded-xl bg-gradient-to-r from-primary/5 to-secondary/5 hover:scale-[1.02] hover:shadow-lg transition-all duration-200">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                        <span className="font-semibold text-gray-800 text-lg">
+                          {idx + 1}. {q.question}
+                        </span>
+                        <a
+                          href={q.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-primary text-base px-6 py-2 rounded-full shadow hover:scale-105 transition-transform"
+                        >
+                          Study
+                        </a>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="mt-8 btn btn-primary w-full text-lg py-3 rounded-xl shadow-lg hover:scale-105 transition-transform"
+                >
+                  Close
+                </button>
+              </div>
+            </Modal>
           </div>
         )}
       </div>
