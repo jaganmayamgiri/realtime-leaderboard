@@ -197,19 +197,19 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
 
         <div className="space-y-6">
           {shuffledQuestions.map((question, idx) => (
-            <div key={question.id} className="card">
-              <h3 className="text-lg font-semibold mb-4">
-                {idx + 1}. {question.question}
+            <div key={question.id} className="card card-animate mb-8 hover:scale-[1.025] hover:shadow-2xl transition-transform duration-300">
+              <h3 className="text-2xl font-bold mb-6 text-gray-900 drop-shadow-sm tracking-tight">
+                <span className="text-primary mr-2">{idx + 1}.</span> {question.question}
               </h3>
-              <div className="space-y-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {question.options.map((option) => (
                   <button
                     key={option}
                     onClick={() => !submitted && handleAnswerSelect(question.id, option)}
-                    className={`w-full text-left p-3 rounded-md border transition-colors duration-200 ${getOptionStyle(question.id, option)}`}
+                    className={`w-full text-left p-4 rounded-xl border transition-all duration-300 transform hover:scale-[1.03] hover:shadow-lg focus:ring-2 focus:ring-primary focus:outline-none bg-white bg-opacity-80 backdrop-blur-md card-animate ${getOptionStyle(question.id, option)}`}
                     disabled={submitted || isSubmitting}
                   >
-                    {option}
+                    <span className="text-lg font-medium">{option}</span>
                   </button>
                 ))}
               </div>
@@ -218,16 +218,16 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
         </div>
 
         {!submitted && (
-          <div className="mt-8 text-center">
+          <div className="mt-12 text-center">
             <button
               onClick={handleSubmit}
-              className={`btn btn-primary px-8 py-3 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`btn btn-primary px-10 py-4 text-xl shadow-xl rounded-full transition-all duration-300 hover:scale-105 active:scale-95 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
               disabled={Object.keys(selectedAnswers).length !== shuffledQuestions.length || isSubmitting}
             >
               {isSubmitting ? 'Submitting...' : 'Submit Answers'}
             </button>
             {Object.keys(selectedAnswers).length !== shuffledQuestions.length && (
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-4 text-base text-gray-500 animate-pulse">
                 Please answer all questions before submitting
               </p>
             )}
@@ -235,20 +235,20 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
         )}
 
         {showScore && (
-          <div className="mt-8 text-center">
-            <div className="card bg-white">
-              <h2 className="text-2xl font-bold mb-2">
-                Your Score: {calculateScore()} out of {shuffledQuestions.length}
+          <div className="mt-12 text-center">
+            <div className="card card-animate bg-white shadow-2xl">
+              <h2 className="text-3xl font-extrabold mb-4 text-primary drop-shadow">
+                Your Score: {calculateScore()} <span className="text-gray-700 font-medium">out of {shuffledQuestions.length}</span>
               </h2>
-              <p className="text-gray-600 mb-4">
+              <p className="text-lg text-gray-600 mb-6 animate-fade-in">
                 {calculateScore() === shuffledQuestions.length
-                  ? "Perfect score! 🎉"
-                  : "Keep practicing! 💪"}
+                  ? <span className="text-green-600 font-semibold">Perfect score! 🎉</span>
+                  : <span className="text-blue-600 font-semibold">Keep practicing! 💪</span>}
               </p>
               <div className="space-y-4">
                 <button
                   onClick={() => navigate('/')}
-                  className="btn btn-primary w-full"
+                  className="btn btn-primary w-full text-lg py-3 rounded-xl shadow-lg hover:scale-105 transition-transform"
                 >
                   View Leaderboard
                 </button>
@@ -258,7 +258,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
                     setSubmitted(false);
                     setShowScore(false);
                   }}
-                  className="btn bg-gray-100 text-gray-700 hover:bg-gray-200 w-full"
+                  className="btn bg-gray-100 text-gray-700 hover:bg-gray-200 w-full text-lg py-3 rounded-xl shadow"
                 >
                   Try Again
                 </button>

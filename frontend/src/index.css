@@ -4,19 +4,22 @@
 
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-md font-semibold transition-colors duration-200;
+    @apply px-4 py-2 rounded-md font-semibold transition-colors duration-200 shadow-md;
   }
   
   .btn-primary {
-    @apply bg-primary text-white hover:bg-secondary;
+    @apply bg-gradient-to-r from-primary to-secondary text-white hover:from-secondary hover:to-primary shadow-lg;
   }
   
   .input {
-    @apply px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+    @apply px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-white bg-opacity-80 backdrop-blur-md shadow-inner;
   }
   
   .card {
-    @apply bg-white rounded-lg shadow-md p-6;
+    @apply bg-white bg-opacity-70 rounded-2xl shadow-2xl p-8 backdrop-blur-lg border border-gray-200 transition-transform duration-300;
+  }
+  .card-animate {
+    animation: fadeSlideIn 0.7s cubic-bezier(0.4,0,0.2,1);
   }
 }
 
@@ -27,6 +30,20 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  background: linear-gradient(120deg, #e0e7ff 0%, #f3f4f6 50%, #dbeafe 100%);
+  background-size: 200% 200%;
+  animation: bgMove 10s ease-in-out infinite alternate;
+}
+
+@keyframes bgMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+@keyframes fadeSlideIn {
+  0% { opacity: 0; transform: translateY(40px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 code {
