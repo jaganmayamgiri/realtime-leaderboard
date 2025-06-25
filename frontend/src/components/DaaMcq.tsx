@@ -132,7 +132,8 @@ const studyResources = [
   }
 ];
 
-const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
+const DaaMcq: React.FC<DaaMcqProps> = ({ userName: propUserName }) => {
+  const userName = propUserName || localStorage.getItem('userName') || 'Guest';
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: string }>({});
   const [submitted, setSubmitted] = useState(false);
   const [showScore, setShowScore] = useState(false);
