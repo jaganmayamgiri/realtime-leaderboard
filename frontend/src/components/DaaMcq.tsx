@@ -75,13 +75,33 @@ const questions: Question[] = [
   }
 ];
 
+// Utility function to shuffle an array
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
   const [selectedAnswers, setSelectedAnswers] = useState<{ [key: number]: string }>({});
   const [submitted, setSubmitted] = useState(false);
   const [showScore, setShowScore] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    // Shuffle questions and their options
+    const shuffled = shuffleArray(questions).map(q => ({
+      ...q,
+      options: shuffleArray(q.options)
+    }));
+    setShuffledQuestions(shuffled);
+  }, []);
 
   const handleAnswerSelect = (questionId: number, answer: string) => {
     setSelectedAnswers(prev => ({
@@ -92,7 +112,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
 
   const calculateScore = () => {
     return Object.entries(selectedAnswers).reduce((score, [questionId, answer]) => {
-      const question = questions.find(q => q.id === parseInt(questionId));
+      const question = shuffledQuestions.find(q => q.id === parseInt(questionId));
       return score + (question?.correctAnswer === answer ? 1 : 0);
     }, 0);
   };
@@ -147,7 +167,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
         : "bg-white hover:bg-gray-50";
     }
 
-    const question = questions.find(q => q.id === questionId);
+    const question = shuffledQuestions.find(q => q.id === questionId);
     if (option === question?.correctAnswer) {
       return "bg-green-100 border-green-500 text-green-700";
     }
@@ -176,7 +196,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
         )}
 
         <div className="space-y-6">
-          {questions.map((question) => (
+          {shuffledQuestions.map((question) => (
             <div key={question.id} className="card">
               <h3 className="text-lg font-semibold mb-4">
                 {question.id}. {question.question}
@@ -202,11 +222,11 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
             <button
               onClick={handleSubmit}
               className={`btn btn-primary px-8 py-3 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
-              disabled={Object.keys(selectedAnswers).length !== questions.length || isSubmitting}
+              disabled={Object.keys(selectedAnswers).length !== shuffledQuestions.length || isSubmitting}
             >
               {isSubmitting ? 'Submitting...' : 'Submit Answers'}
             </button>
-            {Object.keys(selectedAnswers).length !== questions.length && (
+            {Object.keys(selectedAnswers).length !== shuffledQuestions.length && (
               <p className="mt-2 text-sm text-gray-600">
                 Please answer all questions before submitting
               </p>
@@ -218,10 +238,10 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName }) => {
           <div className="mt-8 text-center">
             <div className="card bg-white">
               <h2 className="text-2xl font-bold mb-2">
-                Your Score: {calculateScore()} out of {questions.length}
+                Your Score: {calculateScore()} out of {shuffledQuestions.length}
               </h2>
               <p className="text-gray-600 mb-4">
-                {calculateScore() === questions.length
+                {calculateScore() === shuffledQuestions.length
                   ? "Perfect score! 🎉"
                   : "Keep practicing! 💪"}
               </p>
