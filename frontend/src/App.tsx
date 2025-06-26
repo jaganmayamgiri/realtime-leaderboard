@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -8,13 +8,8 @@ import Leaderboard from './components/Leaderboard';
 import Modal from 'react-modal';
 
 function Home({ onNameSet }: { onNameSet: (name: string) => void }) {
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(true);
   const [name, setName] = useState('');
-
-  useEffect(() => {
-    const stored = localStorage.getItem('userName');
-    if (!stored) setShowModal(true);
-  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
