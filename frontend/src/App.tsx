@@ -19,6 +19,13 @@ function Home({ onNameSet }: { onNameSet: (name: string) => void }) {
     setShowModal(false);
   };
 
+  const handleCancel = () => {
+    setShowModal(false);
+    // Optionally, you can also clear the name or redirect
+    // setName('');
+    // window.location.href = '/';
+  };
+
   return (
     <>
       <Hero />
@@ -39,9 +46,14 @@ function Home({ onNameSet }: { onNameSet: (name: string) => void }) {
             onChange={e => setName(e.target.value)}
             autoFocus
           />
-          <button type="submit" className="btn btn-primary w-full text-lg py-3 rounded-xl shadow-lg hover:scale-105 transition-transform">
-            Continue
-          </button>
+          <div className="flex gap-4">
+            <button type="submit" className="btn btn-primary w-full text-lg py-3 rounded-xl shadow-lg hover:scale-105 transition-transform">
+              Continue
+            </button>
+            <button type="button" onClick={handleCancel} className="btn btn-secondary w-full text-lg py-3 rounded-xl shadow hover:scale-105 transition-transform">
+              Cancel
+            </button>
+          </div>
         </form>
       </Modal>
     </>
