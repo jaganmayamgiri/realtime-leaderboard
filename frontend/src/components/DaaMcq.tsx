@@ -204,15 +204,14 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName: propUserName }) => {
   };
 
   const getOptionStyle = (questionId: number, option: string) => {
+    const question = shuffledQuestions.find(q => q.id === questionId);
     if (!submitted) {
       return selectedAnswers[questionId] === option
         ? "bg-blue-600 text-white"
         : "bg-white hover:bg-gray-50";
     }
-
-    const question = shuffledQuestions.find(q => q.id === questionId);
     if (option === question?.correctAnswer) {
-      return "bg-green-100 border-green-500 text-green-700";
+      return "bg-green-100 border-green-500 text-green-700 font-bold";
     }
     if (selectedAnswers[questionId] === option && option !== question?.correctAnswer) {
       return "bg-red-100 border-red-500 text-red-700";
