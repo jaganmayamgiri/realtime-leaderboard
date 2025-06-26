@@ -49,8 +49,8 @@ const questions: Question[] = [
   {
     id: 6,
     question: "In Dynamic Programming, the technique of storing previously computed values to avoid repeated work is called:",
-    options: ["Memoization", "Recursion", "Backtracking", "Branch and Bound"],
-    correctAnswer: "Memoization"
+    options: ["Memorization", "Recursion", "Backtracking", "Branch and Bound"],
+    correctAnswer: "Memorization"
   },
   {
     id: 7,
@@ -174,12 +174,12 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName: propUserName }) => {
     const score = calculateScore();
     setScoreForCountUp(score);
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
-      if (!backendUrl) {
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+      if (!API_URL) {
         throw new Error('Backend URL is not configured');
       }
       const nameToSend = userName && userName.trim() !== '' ? userName : 'Guest';
-      const response = await fetch(`${backendUrl}/add_score`, {
+      const response = await fetch(`${API_URL}/add_score`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

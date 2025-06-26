@@ -56,7 +56,8 @@ const Leaderboard: React.FC = () => {
   useEffect(() => {
     const fetchScores = async () => {
       try {
-        const response = await fetch('http://localhost:3001/get_leaderboard');
+        const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+        const response = await fetch(`${API_URL}/get_leaderboard`);
         if (!response.ok) {
           throw new Error('Failed to fetch scores');
         }
