@@ -266,7 +266,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName: propUserName }) => {
                   <button
                     key={option}
                     onClick={() => !submitted && handleAnswerSelect(question.id, option)}
-                    className={`w-full text-left p-4 rounded-xl border transition-all duration-300 transform hover:scale-[1.03] hover:shadow-lg focus:ring-2 focus:ring-primary focus:outline-none bg-white bg-opacity-80 backdrop-blur-md card-animate ${getOptionStyle(question.id, option)}`}
+                    className={`w-full text-left p-4 rounded-xl border transition-all duration-300 transform hover:scale-[1.03] hover:shadow-lg focus:ring-2 focus:ring-primary focus:outline-none backdrop-blur-md card-animate ${getOptionStyle(question.id, option)}`}
                     disabled={submitted || isSubmitting}
                   >
                     <span className="text-lg font-medium">{option}</span>
