@@ -78,7 +78,6 @@ const CardGrid: React.FC = () => {
           ? Array.from({ length: 8 }).map((_, idx) => <SkeletonCard key={idx} />)
           : cards.map((card) => (
               <div key={card.title} className="card card-animate flex flex-col items-center text-center bg-white dark:bg-gray-800 shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300">
-                <img src={card.img} alt={card.title} className="w-full h-40 object-cover rounded-xl mb-4" loading="lazy" />
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{card.title}</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4 flex-1">{card.desc}</p>
                 <a href={card.link} target={card.link.startsWith('http') ? '_blank' : undefined} rel="noopener noreferrer" className="btn btn-primary w-full mt-auto">
