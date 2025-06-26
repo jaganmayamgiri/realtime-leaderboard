@@ -14,7 +14,7 @@ const Navbar: React.FC = () => {
           {/* Brand */}
           <Link to="/" className="flex items-center gap-2 text-2xl font-extrabold text-primary">
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="inline-block"><circle cx="16" cy="16" r="16" fill="#3B82F6"/><text x="16" y="22" textAnchor="middle" fontSize="18" fill="#fff" fontWeight="bold">Q</text></svg>
-            DAA Quiz Pro
+            DAA Quiz 
           </Link>
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-8">
