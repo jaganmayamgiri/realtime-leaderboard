@@ -174,7 +174,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName: propUserName }) => {
     const score = calculateScore();
     setScoreForCountUp(score);
     try {
-      const backendUrl = process.env.REACT_APP_BACKEND_URL;
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001';
       if (!backendUrl) {
         throw new Error('Backend URL is not configured');
       }
