@@ -173,15 +173,11 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName: propUserName }) => {
     setError('');
     const score = calculateScore();
     setScoreForCountUp(score);
-    
     try {
       const backendUrl = process.env.REACT_APP_BACKEND_URL;
       if (!backendUrl) {
         throw new Error('Backend URL is not configured');
       }
-      
-      console.log('Submitting to backend URL:', backendUrl); // Debug log
-      
       const nameToSend = userName && userName.trim() !== '' ? userName : 'Guest';
       const response = await fetch(`${backendUrl}/add_score`, {
         method: 'POST',
@@ -192,28 +188,14 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName: propUserName }) => {
         mode: 'cors',
         body: JSON.stringify({ name: nameToSend, score }),
       });
-
-      console.log('Response status:', response.status); // Debug log
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Error response:', errorData); // Debug log
         throw new Error(errorData.error || `Failed to submit score: ${response.status} ${response.statusText}`);
       }
-
-      const data = await response.json();
-      console.log('Score submitted successfully:', data); // Debug log
       setSubmitted(true);
       setShowScore(true);
-      if (score === shuffledQuestions.length) {
-        confetti({
-          particleCount: 150,
-          spread: 90,
-          origin: { y: 0.6 }
-        });
-      }
+      navigate('/leaderboard');
     } catch (err) {
-      console.error('Error submitting score:', err);
       setError(err instanceof Error ? err.message : 'Failed to submit score. Please try again.');
     } finally {
       setIsSubmitting(false);

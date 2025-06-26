@@ -4,7 +4,7 @@ const Hero: React.FC = () => (
   <section className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4 relative overflow-hidden">
     <div className="max-w-2xl mx-auto z-10">
       <h1 className="text-4xl md:text-6xl font-extrabold mb-6 text-gray-900 dark:text-white drop-shadow animate-fade-in">
-        Welcome to <span className="text-primary">DAA Quiz Pro</span>
+        Welcome to <span className="text-primary">DAA Quiz</span>
       </h1>
       <p className="text-lg md:text-2xl text-gray-600 dark:text-gray-300 mb-8 animate-fade-in delay-100">
         Master Data Structures & Algorithms with interactive quizzes, real-time leaderboards, and curated study resources.
