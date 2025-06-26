@@ -78,7 +78,19 @@ const Leaderboard: React.FC = () => {
       const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
       const response = await fetch(`${API_URL}/clear_leaderboard`, { method: 'POST' });
       if (!response.ok) throw new Error('Failed to clear leaderboard');
-      setScores([]);
+      setError('');
+      setLoading(true);
+      // Fetch the leaderboard again after clearing
+      const refreshed = await fetch(`${API_URL}/get_leaderboard`);
+      if (refreshed.ok) {
+        const data = await refreshed.json();
+        setScores(data);
+        setError('Leaderboard cleared successfully.');
+      } else {
+        setScores([]);
+        setError('Leaderboard cleared, but failed to refresh leaderboard.');
+      }
+      setLoading(false);
     } catch (err) {
       setError('Failed to clear leaderboard. Please try again later.');
     }
