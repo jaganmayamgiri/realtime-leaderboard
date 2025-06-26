@@ -144,6 +144,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName: propUserName }) => {
   const [scoreForCountUp, setScoreForCountUp] = useState(0);
   const progressRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [showNext, setShowNext] = useState(false);
 
   React.useEffect(() => {
     // Shuffle questions and their options
@@ -194,7 +195,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName: propUserName }) => {
       }
       setSubmitted(true);
       setShowScore(true);
-      navigate('/leaderboard');
+      setShowNext(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to submit score. Please try again.');
     } finally {
@@ -306,17 +307,20 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName: propUserName }) => {
                   : <span className="text-blue-600 font-semibold">Keep practicing! 💪</span>}
               </p>
               <div className="space-y-4">
-                <button
-                  onClick={() => navigate('/')}
-                  className="btn btn-primary w-full text-lg py-3 rounded-xl shadow-lg hover:scale-105 transition-transform"
-                >
-                  View Leaderboard
-                </button>
+                {showNext && (
+                  <button
+                    onClick={() => navigate('/leaderboard')}
+                    className="btn btn-primary w-full text-lg py-3 rounded-xl shadow-lg hover:scale-105 transition-transform"
+                  >
+                    Next
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setSelectedAnswers({});
                     setSubmitted(false);
                     setShowScore(false);
+                    setShowNext(false);
                   }}
                   className="btn bg-gray-100 text-gray-700 hover:bg-gray-200 w-full text-lg py-3 rounded-xl shadow"
                 >
