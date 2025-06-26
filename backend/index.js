@@ -1,3 +1,7 @@
+const fs = require('fs');
+const path = require('path');
+const leaderboardFile = path.join(__dirname, 'leaderboard.json');
+
 // Custom Min-Heap implementation for top N scores
 class MinHeap {
     constructor(maxSize) {
@@ -80,6 +84,31 @@ app.use(express.json());
 // Initialize heap with max size of 100
 const leaderboard = new MinHeap(100);
 
+// Load leaderboard from file if it exists
+function loadLeaderboard() {
+    if (fs.existsSync(leaderboardFile)) {
+        try {
+            const data = JSON.parse(fs.readFileSync(leaderboardFile, 'utf-8'));
+            if (Array.isArray(data)) {
+                data.forEach(entry => leaderboard.insert(entry));
+            }
+        } catch (e) {
+            console.error('Failed to load leaderboard from file:', e);
+        }
+    }
+}
+
+// Save leaderboard to file
+function saveLeaderboard() {
+    try {
+        fs.writeFileSync(leaderboardFile, JSON.stringify(leaderboard.getSortedScores(), null, 2));
+    } catch (e) {
+        console.error('Failed to save leaderboard to file:', e);
+    }
+}
+
+loadLeaderboard();
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error('Global error handler:', err.stack);
@@ -104,6 +133,7 @@ app.post('/add_score', (req, res) => {
 
         leaderboard.insert({ name, score });
         const updatedScores = leaderboard.getSortedScores();
+        saveLeaderboard();
         console.log('Score added successfully:', { name, score, updatedScores });
         res.json({ 
             message: 'Score added successfully', 
