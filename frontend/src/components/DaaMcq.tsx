@@ -206,7 +206,7 @@ const DaaMcq: React.FC<DaaMcqProps> = ({ userName: propUserName }) => {
   const getOptionStyle = (questionId: number, option: string) => {
     if (!submitted) {
       return selectedAnswers[questionId] === option
-        ? "bg-primary text-white"
+        ? "bg-blue-600 text-white"
         : "bg-white hover:bg-gray-50";
     }
 
